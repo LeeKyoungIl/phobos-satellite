@@ -1,0 +1,157 @@
+buildscript {
+	ext {
+		versions = [
+
+		]
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+
+	}
+}
+subprojects {
+	group "me.phoboslabs.${it.path.replaceFirst(':', '').replaceAll(':', '.')}"
+	version "0.0.1"
+
+	allprojects {
+		apply plugin: 'io.spring.dependency-management'
+		apply plugin: 'java'
+		apply plugin: 'groovy'
+		apply plugin: 'java-library'
+		apply plugin: 'jacoco'
+	}
+
+	wrapper {
+		gradleVersion = "8.5"
+		distributionUrl = distributionUrl.replace("bin", "all")
+	}
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF8'
+
+	repositories {
+		mavenCentral()
+		maven { url = 'https://repo.maven.apache.org/maven2' }
+		maven { url = 'https://maven.google.com/' }
+		maven { url = 'https://repo1.maven.org/maven2/' }
+		flatDir {
+			dirs 'libs'
+		}
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	dependencies {
+
+	}
+
+	jacoco {
+		toolVersion = "0.8.7"
+		reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+	}
+
+	test {
+		systemProperty 'spring.profiles.active', 'test'
+		systemProperty 'file.encoding', 'UTF-8'
+
+		finalizedBy jacocoTestReport
+
+		useJUnitPlatform()
+	}
+
+	jacocoTestReport {
+		reports {
+			xml.required = false
+			csv.required = false
+			html.required = true
+		}
+
+		dependsOn test
+		finalizedBy 'jacocoTestCoverageVerification'
+	}
+
+	jacocoTestCoverageVerification {
+		violationRules {
+			rule {
+				limit {
+					minimum = 0.00
+				}
+			}
+
+			rule {
+				enabled = false
+				element = "CLASS"
+
+				limit {
+					counter = "BRANCH"
+					value = "COVEREDRATIO"
+					minimum = 0.80
+				}
+
+				limit {
+					counter = "LINE"
+					value = "COVEREDRATIO"
+					minimum = 0.80
+				}
+
+				limit {
+					counter = "LINE"
+					value = "TOTALCOUNT"
+					maximum = 200
+				}
+
+				excludes = ["*.Test.*"]
+			}
+		}
+	}
+
+	tasks.withType(JavaCompile) {
+		options.encoding = 'UTF-8'
+	}
+
+	tasks.bootJar {
+		enabled = true
+	}
+
+	def querydslDir = "$buildDir/generated/querydsl"
+
+	querydsl {
+		jpa = true
+		querydslSourcesDir = querydslDir
+	}
+	sourceSets {
+		main.java.srcDir querydslDir
+	}
+	compileQuerydsl{
+		options.annotationProcessorPath = configurations.querydsl
+	}
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+		querydsl.extendsFrom compileClasspath
+	}
+
+	task copylibs(type: Copy) {
+		from 'libs/.'
+		into 'build/libs'
+	}
+
+	bootRun {
+		String activeProfile = System.properties['spring.profiles.active']
+		if (activeProfile == null || activeProfile.trim() == '') {
+			activeProfile = 'test'
+		}
+		systemProperty "spring.profiles.active", activeProfile
+	}
+}
+
