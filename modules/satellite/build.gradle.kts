@@ -2,8 +2,8 @@ plugins {
     id("java")
 }
 
-group = "org.example"
-version = "unspecified"
+group = "me.phoboslabs.phobos"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -16,4 +16,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    archiveBaseName.set("phobos-satellite")
+    archiveVersion.set("1.0.0")
+    archiveClassifier.set("")
+    archiveExtension.set("jar")
+    from(sourceSets.main.get().allSource)
 }
