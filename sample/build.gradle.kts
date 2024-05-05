@@ -20,11 +20,18 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("me.phoboslabs.phobos:phobos-satellite:1.0.0")
+	implementation("me.phoboslabs.phobos:phobos-satellite-processor:1.0.0")
+	annotationProcessor("me.phoboslabs.phobos:phobos-satellite-processor:1.0.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+	doFirst {
+		println("AnnotationProcessorPath for $name is ${options.annotationProcessorPath?.files}")
+	}
 }

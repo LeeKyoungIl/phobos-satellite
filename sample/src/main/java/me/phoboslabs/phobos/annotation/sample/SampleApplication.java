@@ -1,8 +1,10 @@
-package me.phoboslabs.phobos.satellite.sample;
+package me.phoboslabs.phobos.annotation.sample;
 
+import me.phoboslabs.phobos.satellite.annotation.PhobosSatellite;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@PhobosSatellite
 @SpringBootApplication
 public class SampleApplication {
 

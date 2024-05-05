@@ -1,4 +1,4 @@
-package me.phoboslabs.phobos.satellite.sample;
+package me.phoboslabs.phobos.annotation.sample;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
