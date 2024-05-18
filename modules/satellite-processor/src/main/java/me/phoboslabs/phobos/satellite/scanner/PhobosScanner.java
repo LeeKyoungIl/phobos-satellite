@@ -7,7 +7,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
 
-//@ComponentScan("me.phoboslabs")
 public class PhobosScanner {
 
     public static void init() {

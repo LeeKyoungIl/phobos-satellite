@@ -11,7 +11,6 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.io.Writer;
-import java.util.Optional;
 import java.util.Set;
 
 @SupportedAnnotationTypes({
@@ -50,33 +49,28 @@ public class SatelliteProcessor extends AbstractProcessor {
 
         Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(PhobosSatellite.class);
 
+        PackageElement packageElement = null;
         // 해당 요소들을 순회하며 처리
         for (Element element : annotatedElements) {
             // Element가 TypeElement인지 확인 (클래스, 인터페이스 등)
             if (element instanceof TypeElement) {
-                TypeElement typeElement = (TypeElement) element;
+                if (packageElement == null) {
+                    TypeElement typeElement = (TypeElement) element;
 
-                // TypeElement의 패키지 정보를 가져와 출력
-                PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(typeElement);
-                this.messager.printMessage(Diagnostic.Kind.NOTE, packageElement.toString());
+                    // TypeElement의 패키지 정보를 가져와 출력
+                    packageElement = processingEnv.getElementUtils().getPackageOf(typeElement);
+                    this.messager.printMessage(Diagnostic.Kind.NOTE, packageElement.toString());
+                }
             }
         }
 
-        typeElements.stream().forEach(typeElement -> {
-            this.messager.printMessage(Diagnostic.Kind.NOTE, processingEnv.getElementUtils().getPackageOf(typeElement).toString());
-        });
-
-        Optional<PackageElement> packageElementOpt = typeElements.stream()
-            .map(typeElement -> processingEnv.getElementUtils().getPackageOf(typeElement))
-            .findFirst();
-
-        if (packageElementOpt.isEmpty()) {
+        if (packageElement == null) {
             return true;
         }
 
         try (Writer writer = this.filer.createSourceFile("PhobosSatelliteCollectorGenerated").openWriter()) {
             if (writer != null) {
-                writer.write(this.getSatelliteCollectorBodyClass(packageElementOpt.get().toString()));
+                writer.write(this.getSatelliteCollectorBodyClass(packageElement.toString()));
                 writer.close();
                 this.messager.printMessage(Diagnostic.Kind.NOTE, "generated collector source code.");
             } else {
@@ -101,7 +95,7 @@ public class SatelliteProcessor extends AbstractProcessor {
                 import org.aspectj.lang.annotation.Aspect;
                 import org.aspectj.lang.annotation.Pointcut;
                 import org.springframework.stereotype.Component;
-                 
+                
                 @Component
                 @Aspect
                 public class PhobosSatelliteCollectorGenerated {
