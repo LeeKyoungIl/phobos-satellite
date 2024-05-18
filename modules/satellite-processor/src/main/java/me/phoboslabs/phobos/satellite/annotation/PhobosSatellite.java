@@ -9,4 +9,9 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface PhobosSatellite {
 
+    boolean ignore() default false;
+    int samplingRate() default 100;
+    String[] ignoreProfiles() default {};
+    String profileKeyword() default "spring.profiles.active";
+    boolean isTest() default false;
 }
