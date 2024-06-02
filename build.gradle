@@ -121,7 +121,7 @@ subprojects {
 	}
 
 	tasks.bootJar {
-		enabled = true
+		enabled = false
 	}
 
 	configurations {
