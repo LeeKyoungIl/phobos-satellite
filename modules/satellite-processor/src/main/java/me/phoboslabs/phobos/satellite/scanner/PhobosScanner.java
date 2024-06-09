@@ -9,6 +9,9 @@ import java.lang.reflect.Method;
 
 public class PhobosScanner {
 
+    private PhobosScanner() {}
+
+    @SuppressWarnings("java:S106")
     public static void init() {
         System.out.println(ConstSatelliteProcessor.BANNER_TEXT);
         System.out.println("PhobosScanner is loaded");
@@ -25,30 +28,23 @@ public class PhobosScanner {
         return phobosSatellite;
     }
 
-    public static Object execute(ProceedingJoinPoint pjp) throws Throwable {
+    public static Object execute(ProceedingJoinPoint pjp) {
         try {
             PhobosSatellite phobosSatellite = getPhobosSatellite(pjp);
             if (phobosSatellite == null || phobosSatellite.ignore()) {
                 return pjp.proceed();
+            } else {
+                return pjp.proceed();
             }
-
-            Object result = pjp.proceed();
-            return result;
         } catch (Exception ex) {
-            return pjp.proceed();
+            try {
+                return pjp.proceed();
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    private static void saveRequestLog() {
-
-    }
-
-    private static void saveResponseLog() {
-
-    }
-
-    private static void saveErrorLog() {
-
     }
 }
 
