@@ -28,23 +28,8 @@ public class PhobosScanner {
         return phobosSatellite;
     }
 
-    public static Object execute(ProceedingJoinPoint pjp) {
-        try {
-            PhobosSatellite phobosSatellite = getPhobosSatellite(pjp);
-            if (phobosSatellite == null || phobosSatellite.ignore()) {
-                return pjp.proceed();
-            } else {
-                return pjp.proceed();
-            }
-        } catch (Exception ex) {
-            try {
-                return pjp.proceed();
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+    public static Object execute(ProceedingJoinPoint pjp) throws Throwable {
+        return pjp.proceed();
     }
 }
 
