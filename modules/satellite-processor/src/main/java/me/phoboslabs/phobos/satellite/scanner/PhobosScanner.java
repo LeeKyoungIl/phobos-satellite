@@ -17,6 +17,7 @@ public class PhobosScanner {
         System.out.println("PhobosScanner is loaded");
     }
 
+    @SuppressWarnings("java:S1144")
     private static PhobosSatellite getPhobosSatellite(ProceedingJoinPoint pjp) {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
         PhobosSatellite phobosSatellite = method.getAnnotation(PhobosSatellite.class);
@@ -28,6 +29,7 @@ public class PhobosScanner {
         return phobosSatellite;
     }
 
+    @SuppressWarnings("java:S112")
     public static Object execute(ProceedingJoinPoint pjp) throws Throwable {
         return pjp.proceed();
     }
