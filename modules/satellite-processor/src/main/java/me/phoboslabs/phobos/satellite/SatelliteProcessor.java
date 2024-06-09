@@ -46,8 +46,12 @@ public class SatelliteProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> typeElements, RoundEnvironment roundEnvironment) {
         if (this.done) {
             return true;
+        } else {
+            return processorGenerated(roundEnvironment);
         }
+    }
 
+    private boolean processorGenerated(RoundEnvironment roundEnvironment) {
         Set<? extends Element> annotatedElements = roundEnvironment.getElementsAnnotatedWith(PhobosSatellite.class);
 
         PackageElement packageElement = null;
@@ -58,13 +62,20 @@ public class SatelliteProcessor extends AbstractProcessor {
             }
         }
 
-        if (packageElement == null) {
+        if (packageElement != null) {
+            this.generateCollectorClass(packageElement.toString());
+            this.done = true;
             return true;
+        } else {
+            this.messager.printMessage(Diagnostic.Kind.ERROR, "Sorry, something is wrong in packageElement process.");
+            return false;
         }
+    }
 
+    private void generateCollectorClass(String className) {
         try (Writer writer = this.filer.createSourceFile("PhobosSatelliteCollectorGenerated").openWriter()) {
             if (writer != null) {
-                writer.write(this.getSatelliteCollectorBodyClass(packageElement.toString()));
+                writer.write(this.getSatelliteCollectorBodyClass(className));
                 this.messager.printMessage(Diagnostic.Kind.NOTE, "generated collector source code.");
             } else {
                 this.messager.printMessage(Diagnostic.Kind.ERROR,
@@ -74,9 +85,6 @@ public class SatelliteProcessor extends AbstractProcessor {
             this.messager.printMessage(Diagnostic.Kind.ERROR,
                     "Sorry, something is wrong in generated 'IlluminatiPointcutGenerated.java' process.");
         }
-
-        this.done = true;
-        return true;
     }
 
     private String getSatelliteCollectorBodyClass(String basePackageName) {
