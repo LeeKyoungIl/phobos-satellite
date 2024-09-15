@@ -1,5 +1,7 @@
 package me.phoboslabs.phobos.satellite.annotation;
 
+import me.phoboslabs.phobos.satellite.enumeration.PackageType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,4 +16,7 @@ public @interface PhobosSatellite {
     String[] ignoreProfiles() default {};
     String profileKeyword() default "spring.profiles.active";
     boolean isTest() default false;
+
+    PackageType packageType() default PackageType.DEFAULT;
+
 }

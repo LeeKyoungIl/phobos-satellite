@@ -42,4 +42,8 @@ public class ConstSatelliteProcessor {
     public static Boolean addToQueue(ProceedingJoinPoint proceedingJoinPoint) {
         return SCANNER_PROCESSOR_QUEUE.offer(proceedingJoinPoint);
     }
+
+    public static ProceedingJoinPoint getFromQueue() throws InterruptedException {
+        return SCANNER_PROCESSOR_QUEUE.take();
+    }
 }

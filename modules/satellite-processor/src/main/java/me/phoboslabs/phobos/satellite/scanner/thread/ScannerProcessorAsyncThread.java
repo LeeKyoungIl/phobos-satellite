@@ -1,5 +1,16 @@
 package me.phoboslabs.phobos.satellite.scanner.thread;
 
+import jakarta.servlet.http.HttpServletRequest;
+import me.phoboslabs.phobos.satellite.annotation.PhobosSatellite;
+import me.phoboslabs.phobos.satellite.scanner.constant.ConstSatelliteProcessor;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.lang.reflect.Method;
+import java.net.http.HttpRequest;
+
 public class ScannerProcessorAsyncThread implements Runnable {
 
     @Override
@@ -7,7 +18,8 @@ public class ScannerProcessorAsyncThread implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 System.out.println("ScannerProcessorAsyncThread is running");
-                Thread.sleep(3_000L);
+                ProceedingJoinPoint proceedingJoinPoint = ConstSatelliteProcessor.getFromQueue();
+                HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("ScannerProcessorAsyncThread was interrupted");
@@ -23,4 +35,6 @@ public class ScannerProcessorAsyncThread implements Runnable {
             }
         }
     }
+
+
 }
