@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import me.phoboslabs.phobos.satellite.annotation.PhobosSatellite;
@@ -15,8 +14,6 @@ import me.phoboslabs.phobos.satellite.scanner.vo.PhobosBaseModel;
 import me.phoboslabs.phobos.satellite.util.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class PhobosScanner {
 
@@ -58,7 +55,7 @@ public class PhobosScanner {
     }
 
     @SuppressWarnings("java:S112")
-    public static Object execute(ProceedingJoinPoint pjp) throws Throwable {
+    public static Object execute(ProceedingJoinPoint pjp, HttpServletRequest request) {
         long start = System.currentTimeMillis();
         Map<String, Object> originMethodExecuteResult = getMethodExecuteResult(pjp);
         long elapsedTime = System.currentTimeMillis() - start;
@@ -70,7 +67,6 @@ public class PhobosScanner {
                 PackageType packageType = (annotation != null) ? annotation.packageType() : PackageType.DEFAULT;
                 MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
                 Object[] args = pjp.getArgs();
-                HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
                 PhobosBaseModel phobosBaseModel = new PhobosBaseModel(uuid, annotation, packageType, methodSignature, args, elapsedTime,
                     originMethodExecuteResult, request);

@@ -105,29 +105,42 @@ public class SatelliteProcessor extends AbstractProcessor {
             package %s;
              
             import me.phoboslabs.phobos.satellite.scanner.PhobosScanner;
-            import org.aspectj.lang.ProceedingJoinPoint;
-            import org.aspectj.lang.annotation.Aspect;
-            import org.aspectj.lang.annotation.Pointcut;
-            import org.springframework.stereotype.Component;
-            import org.aspectj.lang.annotation.Around;
-                            
-            @Component
-            @Aspect
-            public class PhobosSatelliteCollectorGenerated {
+             import org.aspectj.lang.ProceedingJoinPoint;
+             import org.aspectj.lang.annotation.Aspect;
+             import org.aspectj.lang.annotation.Pointcut;
+             import org.springframework.stereotype.Component;
+             import org.aspectj.lang.annotation.Around;
+             import jakarta.servlet.http.HttpServletRequest;
+             import org.springframework.web.context.request.RequestContextHolder;
+             import org.springframework.web.context.request.ServletRequestAttributes;
              
-                public PhobosSatelliteCollectorGenerated() {
-                    PhobosScanner.init();
-                }
-                
-                @Pointcut("@within(me.phoboslabs.phobos.satellite.annotation.PhobosSatellite) || " +
-                          "@annotation(me.phoboslabs.phobos.satellite.annotation.PhobosSatellite)")
-                public void phobosSatellitePointcut() {}
-            
-                @Around("phobosSatellitePointcut()")
-                public Object scanPhobosSatellite(ProceedingJoinPoint pjp) throws Throwable {
-                    return PhobosScanner.execute(pjp);
-                }
-            }
+             @Component
+             @Aspect
+             public class PhobosSatelliteCollectorGenerated {
+             
+                 public PhobosSatelliteCollectorGenerated() {
+                     PhobosScanner.init();
+                 }
+             
+                 @Pointcut("@within(me.phoboslabs.phobos.satellite.annotation.PhobosSatellite) || " +
+                           "@annotation(me.phoboslabs.phobos.satellite.annotation.PhobosSatellite)")
+                 public void phobosSatellitePointcut() {}
+             
+                 @Around("phobosSatellitePointcut()")
+                 public Object scanPhobosSatellite(ProceedingJoinPoint pjp) throws Throwable {
+                     HttpServletRequest request = null;
+                     try {
+                         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                         if (attributes != null) {
+                             request = attributes.getRequest();
+                         }
+                     } catch (Exception e) {
+                         // Log the exception or handle it as needed
+                         System.err.println("Error getting HttpServletRequest: " + e.getMessage());
+                     }
+                     return PhobosScanner.execute(pjp, request);
+                 }
+             }
             """.formatted(basePackageName);
     }
 }
