@@ -1,15 +1,7 @@
 package me.phoboslabs.phobos.satellite.scanner.thread;
 
-import jakarta.servlet.http.HttpServletRequest;
-import me.phoboslabs.phobos.satellite.annotation.PhobosSatellite;
 import me.phoboslabs.phobos.satellite.scanner.constant.ConstSatelliteProcessor;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.lang.reflect.Method;
-import java.net.http.HttpRequest;
+import me.phoboslabs.phobos.satellite.scanner.vo.PhobosBaseModel;
 
 public class ScannerProcessorAsyncThread implements Runnable {
 
@@ -17,13 +9,9 @@ public class ScannerProcessorAsyncThread implements Runnable {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
+                PhobosBaseModel phobosBaseModel = ConstSatelliteProcessor.getFromQueue();
+                System.out.println("phobosBaseModel id: " + phobosBaseModel.uuid());
                 System.out.println("ScannerProcessorAsyncThread is running");
-                ProceedingJoinPoint proceedingJoinPoint = ConstSatelliteProcessor.getFromQueue();
-                HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("ScannerProcessorAsyncThread was interrupted");
-                break;
             } catch (Exception ex) {
                 System.err.println("Error in ScannerProcessorAsyncThread: " + ex.getMessage());
                 try {
@@ -35,6 +23,4 @@ public class ScannerProcessorAsyncThread implements Runnable {
             }
         }
     }
-
-
 }

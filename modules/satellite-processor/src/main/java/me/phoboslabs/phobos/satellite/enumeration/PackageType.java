@@ -14,7 +14,7 @@ public enum PackageType {
         this.packageType = packageType;
     }
 
-    public String getPackageType () {
+    public String getPackageType() {
         return this.packageType;
     }
 }

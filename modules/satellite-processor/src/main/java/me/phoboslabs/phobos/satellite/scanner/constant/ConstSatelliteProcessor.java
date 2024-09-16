@@ -1,9 +1,8 @@
 package me.phoboslabs.phobos.satellite.scanner.constant;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import me.phoboslabs.phobos.satellite.scanner.vo.PhobosBaseModel;
 
 public class ConstSatelliteProcessor {
 
@@ -35,15 +34,16 @@ public class ConstSatelliteProcessor {
                         
         """;
 
-    private static final BlockingQueue<ProceedingJoinPoint> SCANNER_PROCESSOR_QUEUE = new LinkedBlockingQueue<>(1000);
+    private static final BlockingQueue<PhobosBaseModel> SCANNER_PROCESSOR_QUEUE = new LinkedBlockingQueue<>(1000);
 
-    private ConstSatelliteProcessor() {}
-
-    public static Boolean addToQueue(ProceedingJoinPoint proceedingJoinPoint) {
-        return SCANNER_PROCESSOR_QUEUE.offer(proceedingJoinPoint);
+    private ConstSatelliteProcessor() {
     }
 
-    public static ProceedingJoinPoint getFromQueue() throws InterruptedException {
+    public static Boolean addToQueue(PhobosBaseModel phobosBaseModel) {
+        return SCANNER_PROCESSOR_QUEUE.offer(phobosBaseModel);
+    }
+
+    public static PhobosBaseModel getFromQueue() throws InterruptedException {
         return SCANNER_PROCESSOR_QUEUE.take();
     }
 }
