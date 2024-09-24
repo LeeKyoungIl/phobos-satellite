@@ -102,9 +102,9 @@ public class SatelliteProcessor extends AbstractProcessor {
 
     private String getSatelliteCollectorBodyClass(String basePackageName) {
         return """
-            package %s;
+             package %s;
              
-            import me.phoboslabs.phobos.satellite.scanner.PhobosScanner;
+             import me.phoboslabs.phobos.satellite.scanner.PhobosScanner;
              import org.aspectj.lang.ProceedingJoinPoint;
              import org.aspectj.lang.annotation.Aspect;
              import org.aspectj.lang.annotation.Pointcut;
