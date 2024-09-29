@@ -21,16 +21,12 @@ public class PhobosScanner {
 
     static {
         ScannerProcessorAsyncThread scannerProcessorAsyncThread = new ScannerProcessorAsyncThread();
-        PHOBOS_DATA_PROCESS_THREAD = new Thread(
-            new ThreadGroup("PhobosScannerWorkerThreads"),
-            scannerProcessorAsyncThread,
-            "PhobosScannerAsyncThread");
+        PHOBOS_DATA_PROCESS_THREAD = new Thread(new ThreadGroup("PhobosScannerWorkerThreads"), scannerProcessorAsyncThread, "PhobosScannerAsyncThread");
         PHOBOS_DATA_PROCESS_THREAD.setDaemon(true);
         PHOBOS_DATA_PROCESS_THREAD.start();
     }
 
-    private static final ExecutorService PHOBOS_BASE_SEND_EXECUTORS = Executors.newWorkStealingPool(
-        Runtime.getRuntime().availableProcessors());
+    private static final ExecutorService PHOBOS_BASE_SEND_EXECUTORS = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
 
     private PhobosScanner() {
     }
@@ -105,9 +101,7 @@ public class PhobosScanner {
     }
 
     public static String getExceptionMessageChain(Throwable throwable) {
-        final StringBuilder result = new StringBuilder()
-            .append("[PhobosSatelliteException] : An exception occurred while running")
-            .append("\r\n\r\n");
+        final StringBuilder result = new StringBuilder().append("[PhobosSatelliteException] : An exception occurred while running").append("\r\n\r\n");
 
         while (throwable != null) {
             result.append(throwable.toString());
